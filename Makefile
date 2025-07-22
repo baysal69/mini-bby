@@ -9,7 +9,7 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 FILES = main.c \
 		exec/built.c exec/exit.c exec/utils.c exec/checks.c exec/free.c \
-		exec/utils_lst.c exec/minishell2.c \
+		exec/utils_lst.c exec/minishell2.c exec/redir.c exec/heredoc.c\
 		pars/minishell.c \
 
 OBJS = ${FILES:.c=.o}

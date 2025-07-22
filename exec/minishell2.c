@@ -1,41 +1,5 @@
 #include "../include/minishell.h"
 
-void append_file(t_token *head, char *s, int flag)  // append ">>"
-{
-	t_token *tmp;
-	int fd;
-
-	tmp = check_redirect(head);
-	if (tmp)
-	{
-		fd = open(tmp->next->token, O_CREAT | O_RDWR | O_APPEND, 0644);
-		ft_putstr_fd(s,fd);
-		if (!flag)
-			ft_putstr_fd("\n",fd);
-	}
-	head = head->next;
-}
-
-void echo_file(t_token *head, char *s, int flag)  // input '>'
-{
-	t_token *tmp;
-	int fd;
-
-	while (head)
-	{
-		tmp = check_redirect(head);
-		if (tmp)
-		{
-			fd = open(tmp->next->token, O_CREAT | O_RDWR | O_TRUNC, 0644);
-			ft_putstr_fd(s, fd);
-			head = head->next;
-			if (!flag)
-				ft_putstr_fd("\n", fd);
-		}
-		head = head->next;
-	}
-}
-
 int token_len(t_token *head)
 {
 	int i;
@@ -51,40 +15,6 @@ int token_len(t_token *head)
 		ttl += i + 1;
 	}
 	return (ttl);
-}
-
-int redirect_occur(t_token *head, t_token *word, char *s, int nl_flag)
-{
-	t_token *tmp;
-	
-	tmp = head;
-	if (word && (redirect_type(word) == 1))
-	{
-		while (tmp != word)//word is redir
-		{
-			ft_strcat(s, tmp->token);
-			if (tmp->next != word)
-				ft_strcat(s," ");
-			tmp = tmp->next;
-		}
-		echo_file(head, s, nl_flag);
-		return (1);
-	}
-	else if (word && (redirect_type(word) == 2))
-	{
-		while (tmp != word)
-		{
-			ft_strcat(s, tmp->token);
-			if (tmp->next != word)
-			{
-				ft_strcat(s," ");
-				tmp = tmp->next;
-			}
-			append_file(head, s, nl_flag);
-		return (1);
-		}
-	}
-	return (0);
 }
 
 int executable(t_token *head)
