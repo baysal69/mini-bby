@@ -9,7 +9,8 @@ LIBFT = $(LIBFT_DIR)/libft.a
 
 FILES = main.c \
 		exec/built.c exec/exit.c exec/utils.c exec/checks.c exec/free.c \
-		exec/utils_lst.c exec/minishell2.c exec/redir.c exec/heredoc.c\
+		exec/utils_lst.c exec/execution.c exec/redir.c exec/heredoc.c\
+		exec/signal.c \
 		pars/minishell.c \
 
 OBJS = ${FILES:.c=.o}
@@ -39,7 +40,7 @@ fclean: clean
 
 re: fclean all
 
-#compile with make val
+#compile with make val for flags
 val: all clean
 		valgrind --track-origins=yes --leak-check=full --show-leak-kinds=all --track-fds=yes --trace-children=yes --suppressions=/put.ur.pwd/val.supp ./minishell
 

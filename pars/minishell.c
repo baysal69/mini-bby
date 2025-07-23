@@ -1,16 +1,18 @@
 #include "../include/minishell.h"
 
-t_token	*create_token(char *token)
+t_token *create_token(const char *str)
 {
-	t_token	*node1;
-
-	node1 = (t_token *)malloc(sizeof(t_token));
-	if (!node1)
-		return (NULL);
-	node1->token = token;
-	node1->next = NULL;
-	//printf("$%s\n", node1->token);
-	return node1;
+    t_token *token = malloc(sizeof(t_token));
+    if (!token)
+        return NULL;
+    token->token = strdup(str);  // MUST use strdup to copy string
+    if (!token->token)
+    {
+        free(token);
+        return NULL;
+    }
+    token->next = NULL;
+    return token;
 }
 
 t_token	*ft_lstlast(t_token *lst)
@@ -74,120 +76,40 @@ int	count_input(char *input)
 	return k + l;
 }
 
+void append_token(t_token **head, t_token *new_tok)
+{
+    if (!*head)
+    {
+        *head = new_tok;
+        return;
+    }
+    t_token *curr = *head;
+    while (curr->next)
+        curr = curr->next;
+    curr->next = new_tok;
+}
 
 void do_absolutely_nothing()
 {
 	//nothing
 }
 
-t_token **split_input(char *input)
+t_token *split_input(char *input)
 {
-	int i;
-	int j;
-	int k;
-	char *tmp;
-	t_token *head;
-	t_token **heads;
+    t_token *head = NULL;
+    char *word;
+    char *rest = input;
 
-	i = 0;
-	j = 0;
-	k = count_input(input);
-	head = NULL;
-	while(k--)
-	{
-		tmp = malloc(ft_strlen(input));
-		while(input[i] && input[i] == ' ')
-			i++;
-		j = 0;
-		while(input[i] && input[i] != ' ')
-		{
-			if(input[i] == '\'')
-                        {
-                                tmp[j++] = input[i++];
-                                if(input[i] == '\'')
-                                {
-                                        i++;
-                                        break;
-                                }
-                                while(input[i] && input[i] != '\'')
-                                        tmp[j++] = input[i++];
-                                if(input[i] && input[i] == '\'')
-                                        tmp[j] = '\'';
-                                if(input[++i] && input[i] == '\'')
-                                {
-                                        k++;
-                                        j++;
-                                        break;
-                                }
-                                if(input[i] && input[i] == ' ')
-                                        tmp[++j] = ' ';
-                                else
-                                        i--;
-                                if(input[++i] && input[i] != ' ' && input[i] != '\'')
-                                {
-                                        j++;
-                                        break;
-                                }
-                                else
-                                        i--;
-                                if(tmp[j] == ' ')
-                                {
-                                        j++;
-                                }
-                        }
-			if(input[i] == '\"')
-			{
-				tmp[j++] = input[i++];
-				if(input[i] == '\"')
-				{
-					i++;
-					break;
-				}
-				while(input[i] && input[i] != '\"')
-					tmp[j++] = input[i++];
-				if(input[i] && input[i] == '\"')
-					tmp[j] = '\"';
-				if(input[++i] && input[i] == '\"')
-                                {
-					k++;
-					j++;
-					break;
-                                }
-				if(input[i] && input[i] == ' ')
-					tmp[++j] = ' ';
-				else
-					i--;
-				if(input[++i] && input[i] != ' ' && input[i] != '\"')
-				{
-					j++;
-					break;
-				}
-				else
-					i--;
-				if(tmp[j] == ' ')
-				{
-					j++;
-				}
-			}
-			else
-			{
-				tmp[j++] = input[i++];
-				if(input[i] && input[i] == '\"')
-				{
-					k++;
-					break;
-				}
-			}
-		}
-		tmp[j] = '\0';
-		if((tmp[0] == '\"' && tmp[1] == '\0') || (tmp[0] == '\'' && tmp[1] == '\0'))
-			do_absolutely_nothing();	
-		else
-			insert_token(&head, create_token(tmp));
-	}
-	heads = &head;
-	return heads;
+    while ((word = strtok_r(rest, " ", &rest)))
+    {
+        t_token *new_tok = create_token(word);
+        if (!new_tok)
+            continue;
+        append_token(&head, new_tok);
+    }
+    return head;
 }
+
 
 int unclosed_quotes(char *input)
 {

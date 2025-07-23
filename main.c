@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 	(void)argc;
 	(void)argv;
 	char *input;
-	t_token **head;
+	t_token *head;
 
 	while(1)
 	{
@@ -30,14 +30,20 @@ int main(int argc, char **argv)
 		}
 		if (*input)
 		{
-			if(!unclosed_quotes(input))
+			if (!unclosed_quotes(input))
 			{
 				printf("unclosed quotes\n");
 				free(input);
 				return 0;
 			}
 			head = split_input(input);
-			check_command(*head);
+/* 			t_token *tmp; = head;
+			while (tmp)
+			{
+    			printf("token: %s\n", tmp->token);
+    			tmp = tmp->next;
+			} */
+			execute_redir(&head);
 			//break;
 		}
 		free(input);

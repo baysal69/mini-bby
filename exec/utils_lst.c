@@ -1,6 +1,6 @@
 #include "../include/minishell.h"
 
-t_token	*lst_new (const char *text)
+t_token	*lst_new(const char *text)
 {
 	t_token	*node;
 
@@ -27,4 +27,21 @@ t_token	*lst_last(t_token *lst)
 		return (tmp);
 	}
 	return (NULL);
+}
+
+int token_len(t_token *head)
+{
+	int i;
+	int ttl;
+
+	i = 0;
+	ttl= 0;
+	while (head && head->token[0] != '>' && head->token[0] != '<' )
+	{
+		while (head->token[i])
+			i++;
+		head = head->next;
+		ttl += i + 1;
+	}
+	return (ttl);
 }
